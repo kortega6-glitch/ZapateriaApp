@@ -5,6 +5,7 @@
 @using ZapateriaApp.Models
 
 @inject AppDbContext Context
+@inject IJSRuntime JS
 
 <PageTitle>Clientes</PageTitle>
 
@@ -69,7 +70,7 @@ else
                             Editar
                         </button>
 
-                        <button @onclick="() => EliminarCliente(cliente.Id)">
+                        <button @onclick="() => ConfirmarEliminar(cliente.Id)">
                             Eliminar
                         </button>
                     </td>
@@ -140,6 +141,18 @@ else
         };
 
         modoEdicion = true;
+    }
+
+    private async Task ConfirmarEliminar(int id)
+    {
+        bool confirmar = await JS.InvokeAsync<bool>(
+            "confirm",
+            "¿Eliminar cliente?");
+
+        if (confirmar)
+        {
+            await EliminarCliente(id);
+        }
     }
 
     private async Task EliminarCliente(int id)
