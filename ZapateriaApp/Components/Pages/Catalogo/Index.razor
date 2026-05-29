@@ -1,0 +1,48 @@
+﻿@page "/catalogo"
+
+@using ZapateriaApp.Models
+@using ZapateriaApp.Services
+
+@inject ApiService ApiService
+
+<PageTitle>Catálogo</PageTitle>
+
+<h1>Catálogo de Calzado</h1>
+
+@if (productos == null)
+{
+    <p>Cargando catálogo...</p>
+}
+else
+{
+    <div class="productos-grid">
+        @foreach (var producto in productos)
+        {
+            <div class="producto-card">
+                <h3>@producto.Nombre</h3>
+
+                <p>@producto.Descripcion</p>
+
+                <p>
+                    <strong>Precio:</strong>
+                    $@producto.Precio
+                </p>
+
+                <p>
+                    <strong>Stock:</strong>
+                    @producto.Stock
+                </p>
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    private List<ProductoApi>? productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await ApiService.ObtenerProductos();
+    }
+}

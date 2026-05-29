@@ -1,0 +1,89 @@
+﻿@page "/"
+
+@using Microsoft.EntityFrameworkCore
+@using ZapateriaApp.Data
+@using ZapateriaApp.Services
+
+@inject AppDbContext Context
+@inject ApiService ApiService
+
+<PageTitle>Zapatería App</PageTitle>
+
+<h1 class="titulo-dashboard">
+    👞 Zapatería App
+</h1>
+
+<p class="subtitulo-dashboard">
+    Sistema de ventas y catálogo de calzado
+</p>
+
+@if (productosTotal == 0 && clientesTotal == 0)
+{
+    <p>Cargando dashboard...</p>
+}
+else
+{
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <h2>Clientes Registrados</h2>
+
+            <p class="dashboard-numero">
+                @clientesTotal
+            </p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Productos API</h2>
+
+            <p class="dashboard-numero">
+                @productosTotal
+            </p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Ventas Registradas</h2>
+
+            <p class="dashboard-numero">
+                @ventasTotal
+            </p>
+        </div>
+
+    </div>
+
+    <div class="accesos-dashboard">
+
+        <a href="/catalogo">
+            Ver Catálogo
+        </a>
+
+        <a href="/clientes">
+            Gestionar Clientes
+        </a>
+
+        <a href="/ventas">
+            Registrar Ventas
+        </a>
+
+    </div>
+}
+
+@code {
+
+    private int clientesTotal;
+
+    private int productosTotal;
+
+    private int ventasTotal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientesTotal = await Context.Clientes.CountAsync();
+
+        ventasTotal = await Context.Ventas.CountAsync();
+
+        var productos = await ApiService.ObtenerProductos();
+
+        productosTotal = productos.Count;
+    }
+}
